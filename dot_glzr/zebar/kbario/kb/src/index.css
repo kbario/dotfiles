@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "https://www.nerdfonts.com/assets/css/webfont.css";
+
+html,
+body,
+#root {
+  height: 100%;
+}

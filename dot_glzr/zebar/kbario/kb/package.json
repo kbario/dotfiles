@@ -1,0 +1,24 @@
+{
+  "name": "kb",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "clsx": "^2.1.1",
+    "lucide-solid": "^0.544.0",
+    "solid-js": "1.9.2",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.13",
+    "zebar": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "vite": "5.0.11",
+    "vite-plugin-solid": "2.8.2"
+  }
+}

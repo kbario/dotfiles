@@ -1,0 +1,261 @@
+general:
+  # Commands to run when the WM has started (e.g. to run a script or launch
+  # another application).
+  startup_commands: ["shell-exec zebar"]
+
+  # Commands to run just before the WM is shutdown.
+  shutdown_commands: ["shell-exec taskkill /IM zebar.exe /F"]
+
+  # Commands to run after the WM config has reloaded.
+  config_reload_commands: []
+
+  # Whether to automatically focus windows underneath the cursor.
+  focus_follows_cursor: false
+
+  # Whether to switch back and forth between the previously focused
+  # workspace when focusing the current workspace.
+  toggle_workspace_on_refocus: false
+
+  cursor_jump:
+    # Whether to automatically move the cursor on the specified trigger.
+    enabled: true
+
+    # Trigger for cursor jump:
+    # - 'monitor_focus': Jump when focus changes between monitors.
+    # - 'window_focus': Jump when focus changes between windows.
+    trigger: "monitor_focus"
+
+workspaces:
+  - name: "1"
+    display_name: "code"
+    bind_to_monitor: 1
+    keep_alive: true
+    tiling_direction: "horizontal"
+  - name: "2"
+    display_name: "test"
+    bind_to_monitor: 2
+    keep_alive: true
+    tiling_direction: "horizontal"
+  - name: "3"
+    display_name: "internet"
+    bind_to_monitor: 2
+    keep_alive: true
+    tiling_direction: "horizontal"
+  - name: "4"
+    display_name: "debug"
+    bind_to_monitor: 0
+    keep_alive: false
+    tiling_direction: "horizontal"
+  - name: "5"
+    display_name: "comms"
+    bind_to_monitor: 0
+    keep_alive: true
+    tiling_direction: "horizontal"
+  - name: "6"
+    display_name: "other"
+    keep_alive: false
+
+gaps:
+  # Whether to scale the gaps with the DPI of the monitor.
+  scale_with_dpi: true
+
+  # Gap between adjacent windows.
+  inner_gap: "4px"
+
+  # Gap between windows and the screen edge.
+  outer_gap:
+    top: "32px"
+    right: "4px"
+    bottom: "4px"
+    left: "4px"
+
+window_effects:
+  # Visual effects to apply to the focused window.
+  focused_window:
+    # Highlight the window with a colored border.
+    # ** Exclusive to Windows 11 due to API limitations.
+    border:
+      enabled: true
+      color: "#a78bfa"
+
+    # Remove the title bar from the window's frame. Note that this can
+    # cause rendering issues for some applications.
+    hide_title_bar:
+      enabled: false
+
+    # Change the corner style of the window's frame.
+    # ** Exclusive to Windows 11 due to API limitations.
+    corner_style:
+      enabled: true
+      # Allowed values: 'square', 'rounded', 'small_rounded'.
+      style: "small_rounded"
+
+  # Visual effects to apply to non-focused windows.
+  other_windows:
+    border:
+      enabled: true
+      color: "#94a3b8"
+    hide_title_bar:
+      enabled: false
+    corner_style:
+      enabled: true
+      style: "small_rounded"
+
+window_behavior:
+  # New windows are created in this state whenever possible.
+  # Allowed values: 'tiling', 'floating'.
+  initial_state: "tiling"
+
+window_rules:
+  - commands: ["move --workspace 1"]
+    match:
+      - window_process: { regex: "cursor|WindowsTerminal|code" }
+
+  - commands: ["move --workspace 2"]
+    match:
+      - window_process: { regex: "chrome" }
+        window_title: { not_regex: "DevTools" }
+
+  - commands: ["move --workspace 3"]
+    match:
+      - window_process: { regex: "msedge" }
+
+  - commands: ["move --workspace 4"]
+    match:
+      - window_process: { regex: "chrome" }
+        window_title: { regex: "DevTools" }
+
+  - commands: ["move --workspace 5"]
+    match:
+      - window_process: { regex: "teams|olk" }
+        window_title: { not_regex: "call|reminders" }
+
+  - commands: ["move --workspace 6"]
+    match:
+      - window_process:
+          { not_regex: "cursor|WindowsTerminal|code|chrome|msedge|teams|olk" }
+
+  - commands: ["ignore"]
+    match:
+      # Ignores any Zebar windows.
+      - window_process: { equals: "zebar" }
+
+      # Ignores picture-in-picture windows for browsers.
+      - window_title: { regex: "[Pp]icture.in.[Pp]icture" }
+        window_class: { regex: "Chrome_WidgetWin_1|MozillaDialogClass" }
+
+      # Ignore rules for various 3rd-party apps.
+      - window_process: { equals: "PowerToys" }
+        window_class: { regex: 'HwndWrapper\[PowerToys\.PowerAccent.*?\]' }
+      - window_process: { equals: "PowerToys" }
+        window_title: { regex: ".*? - Peek" }
+      - window_process: { equals: "Lively" }
+        window_class: { regex: "HwndWrapper" }
+      - window_process: { equals: "EXCEL" }
+        window_class: { not_regex: "XLMAIN" }
+      - window_process: { equals: "WINWORD" }
+        window_class: { not_regex: "OpusApp" }
+      - window_process: { equals: "POWERPNT" }
+        window_class: { not_regex: "PPTFrameClass" }
+      - window_title: { regex: "GlobalProtect" }
+      - window_process: { regex: "teams" }
+        window_title: { regex: "Reminders" }
+
+binding_modes:
+  # When enabled, the focused window can be resized via arrow keys or HJKL.
+  - name: "resize"
+    keybindings:
+      - commands: ["resize --width -2%"]
+        bindings: ["a"]
+      - commands: ["resize --width -50%"]
+        bindings: ["shift-a"]
+      - commands: ["resize --height +2%"]
+        bindings: ["d"]
+      - commands: ["resize --height +50%"]
+        bindings: ["shift-d"]
+      - commands: ["resize --height -2%"]
+        bindings: ["s"]
+      - commands: ["resize --height -50%"]
+        bindings: ["shift-s"]
+      - commands: ["resize --width +2%"]
+        bindings: ["f"]
+      - commands: ["resize --width +50%"]
+        bindings: ["shift-f"]
+      # Move focused window in a given direction.
+      - commands: ["move --direction left"]
+        bindings: ["h"]
+      - commands: ["move --direction right"]
+        bindings: ["l"]
+      - commands: ["move --direction up"]
+        bindings: ["k"]
+      - commands: ["move --direction down"]
+        bindings: ["j"]
+
+      - commands: ["move-workspace --direction left"]
+        bindings: ["shift-h"]
+      - commands: ["move-workspace --direction down"]
+        bindings: ["shift-j"]
+      - commands: ["move-workspace --direction up"]
+        bindings: ["shift-k"]
+      - commands: ["move-workspace --direction right"]
+        bindings: ["shift+l"]
+
+      # Move focused window to a workspace defined in `workspaces` config.
+      - commands: ["move --workspace 1", "focus --workspace 1"]
+        bindings: ["1"]
+      - commands: ["move --workspace 2", "focus --workspace 2"]
+        bindings: ["2"]
+      - commands: ["move --workspace 3", "focus --workspace 3"]
+        bindings: ["3"]
+      - commands: ["move --workspace 4", "focus --workspace 4"]
+        bindings: ["4"]
+      - commands: ["move --workspace 5", "focus --workspace 5"]
+        bindings: ["5"]
+      - commands: ["move --workspace 6", "focus --workspace 6"]
+        bindings: ["6"]
+
+      # Change the focused window to be tiling.
+      - commands: ["toggle-tiling"]
+        bindings: ["t"]
+
+      # Close focused window.
+      - commands: ["close"]
+        bindings: ["q"]
+
+      # Kill GlazeWM process safely.
+      - commands: ["wm-exit"]
+        bindings: ["e"]
+
+      # Redraw all windows.
+      - commands: ["wm-redraw"]
+        bindings: ["r"]
+
+      # Press enter/escape to return to default keybindings.
+      - commands: ["wm-disable-binding-mode --name resize"]
+        bindings: ["escape", "enter"]
+
+keybindings:
+  - commands: ["focus --workspace 1"]
+    bindings: ["lwin+1"]
+  - commands: ["focus --workspace 2"]
+    bindings: ["lwin+2"]
+  - commands: ["focus --workspace 3"]
+    bindings: ["lwin+3"]
+  - commands: ["focus --workspace 4"]
+    bindings: ["lwin+4"]
+  - commands: ["focus --workspace 5"]
+    bindings: ["lwin+5"]
+  - commands: ["focus --workspace 6"]
+    bindings: ["lwin+6"]
+
+  - commands: ["focus --direction left"]
+    bindings: ["lwin+alt+h"]
+  - commands: ["focus --direction right"]
+    bindings: ["lwin+alt+l"]
+  - commands: ["focus --direction up"]
+    bindings: ["lwin+alt+k"]
+  - commands: ["focus --direction down"]
+    bindings: ["lwin+alt+j"]
+
+  - commands: ["wm-enable-binding-mode --name resize"]
+    bindings: ["lwin+;"]
